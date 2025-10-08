@@ -71,4 +71,7 @@ Persistência de dados em arquivos JSON.
 
 Boas práticas de estruturação de código em Node.js com funções assíncronas.
 
+CANVA
+https://www.canva.com/design/DAG1J8h_Arw/OtN6E8jXVcQE53-GPTHKXw/edit?utm_content=DAG1J8h_Arw&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton
+
 
