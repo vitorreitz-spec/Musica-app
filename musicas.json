@@ -1,0 +1,14 @@
+[
+  {
+    "id": 1,
+    "titulo": "Dubai",
+    "artista": "Hungria",
+    "album": "Desconhecido",
+    "genero": "Hip-hop",
+    "duracao": 4,
+    "ano": 2015,
+    "favorita": true,
+    "avaliacao": 5,
+    "dataAdicao": "2025-10-08"
+  }
+]

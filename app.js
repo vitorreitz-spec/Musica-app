@@ -1,7 +1,26 @@
-const { input, select, checkbox} = require('@inquirer/prompts');
+const { input, select } = require('@inquirer/prompts');
+const fs = require('fs');
+const path = require('path');
 
-let musicas = [];
-let playlists = [];
+// === Caminhos dos arquivos JSON ===
+const caminhoMusicas = path.join(__dirname, 'musicas.json');
+const caminhoPlaylists = path.join(__dirname, 'playlists.json');
+
+// === Funções utilitárias de leitura/gravação ===
+function lerJSON(caminho) {
+    if (!fs.existsSync(caminho)) {
+        fs.writeFileSync(caminho, '[]', 'utf8');
+    }
+    return JSON.parse(fs.readFileSync(caminho, 'utf8'));
+}
+
+function salvarJSON(caminho, dados) {
+    fs.writeFileSync(caminho, JSON.stringify(dados, null, 2), 'utf8');
+}
+
+// === Carregamento inicial dos dados ===
+let musicas = lerJSON(caminhoMusicas);
+let playlists = lerJSON(caminhoPlaylists);
 
 console.log("=== 🎵 Gerenciador de Músicas ===");
 menu();
@@ -35,18 +54,22 @@ async function menu() {
                 console.log("Músicas recentes (7 dias):", musicasRecentes().map(m => m.titulo).join(", ") || "Nenhuma");
                 break;
             case "tabelas": mostrarTabelas(); break;
-            case "sair": 
+            case "sair":
+                console.log("💾 Salvando dados...");
+                salvarJSON(caminhoMusicas, musicas);
+                salvarJSON(caminhoPlaylists, playlists);
                 console.log("👋 Até a próxima!");
                 process.exit();
         }
     }
 }
 
-// Funções do sistema
+// === Funções auxiliares ===
 function gerarId(array) {
     return array.length > 0 ? array[array.length - 1].id + 1 : 1;
 }
 
+// === CRUD de Músicas e Playlists ===
 async function cadastrarMusica() {
     const titulo = await input({ message: "Título da música:" });
     const artista = await input({ message: "Artista:" });
@@ -68,6 +91,7 @@ async function cadastrarMusica() {
         dataAdicao: new Date().toISOString().split('T')[0]
     };
     musicas.push(musica);
+    salvarJSON(caminhoMusicas, musicas);
     console.log("✅ Música cadastrada com sucesso!");
 }
 
@@ -83,6 +107,7 @@ async function criarPlaylist() {
         dataCriacao: new Date().toISOString().split('T')[0]
     };
     playlists.push(playlist);
+    salvarJSON(caminhoPlaylists, playlists);
     console.log("✅ Playlist criada com sucesso!");
 }
 
@@ -104,6 +129,7 @@ async function adicionarMusicaPlaylist() {
 
     const playlist = playlists.find(p => p.id === playlistEscolhida);
     playlist.musicas.push(musicaEscolhida);
+    salvarJSON(caminhoPlaylists, playlists);
     console.log("✅ Música adicionada à playlist!");
 }
 
@@ -117,6 +143,7 @@ async function marcarFavorita() {
 
     const musica = musicas.find(m => m.id === musicaEscolhida);
     musica.favorita = true;
+    salvarJSON(caminhoMusicas, musicas);
     console.log("⭐ Música marcada como favorita!");
 }
 
@@ -133,10 +160,11 @@ async function avaliarMusica() {
 
     const musica = musicas.find(m => m.id === musicaEscolhida);
     musica.avaliacao = avaliacao;
+    salvarJSON(caminhoMusicas, musicas);
     console.log("✅ Música avaliada!");
 }
 
-// Estatísticas
+// === Estatísticas ===
 function generoFavorito() {
     const contador = {};
     musicas.forEach(m => contador[m.genero] = (contador[m.genero] || 0) + 1);
@@ -159,6 +187,7 @@ function musicasRecentes(dias = 7) {
     });
 }
 
+// === Visualização ===
 function mostrarTabelas() {
     console.log("\n🎵 Músicas:");
     console.table(musicas.map(m => ({
@@ -182,8 +211,3 @@ function mostrarTabelas() {
         CriadaEm: p.dataCriacao
     })));
 }
-
-
-
-
-
