@@ -1,11 +1,11 @@
 [
   {
     "id": 1,
-    "nome": "Hip-hop",
+    "nome": "HipHop",
     "descricao": "Musica",
     "musicas": [
       1
     ],
-    "dataCriacao": "2025-10-08"
+    "dataCriacao": "2025-10-09"
   }
 ]
